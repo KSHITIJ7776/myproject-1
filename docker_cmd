@@ -1,0 +1,123 @@
+DOCKER CMD GUIDE (COMPLETE BEGINNER TO BASICS)
+
+====================================================
+1. CHECK DOCKER INSTALLATION
+====================================================
+docker --version
+
+If installed, you will see:
+Docker version xx.xx.x
+
+====================================================
+2. START DOCKER (LINUX / WSL)
+====================================================
+sudo systemctl start docker
+sudo systemctl enable docker
+
+====================================================
+3. RUN FIRST TEST CONTAINER
+====================================================
+docker run hello-world
+
+Purpose:
+- Confirms Docker is installed correctly
+
+====================================================
+4. LIST CONTAINERS
+====================================================
+docker ps          (running containers)
+docker ps -a       (all containers)
+
+====================================================
+5. DOWNLOAD IMAGE (PULL)
+====================================================
+docker pull ubuntu
+docker pull nginx
+
+====================================================
+6. RUN CONTAINER INTERACTIVE MODE
+====================================================
+docker run -it ubuntu
+
+Exit container:
+exit
+
+====================================================
+7. RUN CONTAINER IN BACKGROUND
+====================================================
+docker run -d nginx
+
+Open browser:
+http://localhost
+
+====================================================
+8. PORT MAPPING
+====================================================
+docker run -d -p 8081:80 nginx
+
+Now open:
+http://localhost:8081
+
+====================================================
+9. STOP CONTAINER
+====================================================
+docker ps
+docker stop <container_id>
+
+====================================================
+10. REMOVE CONTAINER
+====================================================
+docker rm <container_id>
+
+====================================================
+11. REMOVE IMAGE
+====================================================
+docker rmi nginx
+
+====================================================
+12. EXECUTE INSIDE CONTAINER
+====================================================
+docker exec -it <container_id> bash
+
+====================================================
+13. VIEW LOGS
+====================================================
+docker logs <container_id>
+
+====================================================
+14. LIST IMAGES
+====================================================
+docker images
+
+====================================================
+15. DOCKER SYSTEM INFO
+====================================================
+docker info
+
+====================================================
+16. CLEAN UP COMMANDS
+====================================================
+docker container prune
+docker image prune
+docker system prune -a
+
+====================================================
+17. IMPORTANT DOCKER CONCEPTS
+====================================================
+Image      = Blueprint (template)
+Container  = Running instance
+Dockerfile = Build instructions
+Volume     = Persistent storage
+
+====================================================
+18. REAL WORLD USES
+====================================================
+- Run web servers (nginx, apache)
+- Run databases (mysql, mongo)
+- Application deployment
+- CI/CD pipelines (Jenkins + Docker)
+- Microservices architecture
+
+====================================================
+END OF DOCKER GUIDE
+====================================================
