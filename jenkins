@@ -1,0 +1,684 @@
+========================================================
+JENKINS COMPLETE PRACTICAL GUIDE
+FROM GITHUB CODE TO AUTOMATED CI/CD PIPELINE
+========================================================
+
+PROJECT FLOW
+
+Developer Pushes Code To GitHub
+            ↓
+Jenkins Detects Changes
+            ↓
+Jenkins Pulls Repository
+            ↓
+Build Application
+            ↓
+Build Docker Image
+            ↓
+Push Docker Image To DockerHub
+            ↓
+Run Container Automatically
+            ↓
+Deploy Application
+
+========================================================
+STEP 1 — INSTALL JAVA
+========================================================
+
+Jenkins requires Java.
+
+UBUNTU / DEBIAN
+
+sudo apt update
+
+sudo apt install openjdk-17-jdk -y
+
+Verify Java
+
+java -version
+
+========================================================
+STEP 2 — INSTALL JENKINS
+========================================================
+
+Add Jenkins Key
+
+curl -fsSL https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key | sudo tee \
+/usr/share/keyrings/jenkins-keyring.asc > /dev/null
+
+Add Jenkins Repository
+
+echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] \
+https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
+/etc/apt/sources.list.d/jenkins.list > /dev/null
+
+Update Packages
+
+sudo apt update
+
+Install Jenkins
+
+sudo apt install jenkins -y
+
+========================================================
+STEP 3 — START JENKINS
+========================================================
+
+sudo systemctl enable jenkins
+
+sudo systemctl start jenkins
+
+Check Status
+
+sudo systemctl status jenkins
+
+========================================================
+STEP 4 — ACCESS JENKINS
+========================================================
+
+Browser
+
+http://SERVER-IP:8080
+
+Local Machine
+
+http://localhost:8080
+
+========================================================
+STEP 5 — GET INITIAL PASSWORD
+========================================================
+
+sudo cat /var/lib/jenkins/secrets/initialAdminPassword
+
+Copy Password
+
+Paste In Browser
+
+========================================================
+STEP 6 — INSTALL SUGGESTED PLUGINS
+========================================================
+
+Choose:
+
+Install Suggested Plugins
+
+Wait Until Installation Completes
+
+========================================================
+STEP 7 — CREATE ADMIN USER
+========================================================
+
+Create:
+
+Username
+Password
+Email
+
+Save And Continue
+
+========================================================
+STEP 8 — INSTALL GIT
+========================================================
+
+sudo apt install git -y
+
+Verify
+
+git --version
+
+========================================================
+STEP 9 — INSTALL DOCKER
+========================================================
+
+sudo apt install docker.io -y
+
+Enable Docker
+
+sudo systemctl enable docker
+
+sudo systemctl start docker
+
+========================================================
+STEP 10 — ALLOW JENKINS TO USE DOCKER
+========================================================
+
+Add Jenkins User To Docker Group
+
+sudo usermod -aG docker jenkins
+
+Restart Jenkins
+
+sudo systemctl restart jenkins
+
+========================================================
+STEP 11 — VERIFY DOCKER ACCESS
+========================================================
+
+sudo su - jenkins
+
+docker ps
+
+If Permission Error:
+
+Reboot Server
+
+sudo reboot
+
+========================================================
+STEP 12 — CREATE GITHUB REPOSITORY
+========================================================
+
+Open GitHub
+
+Create Repository
+
+Example:
+
+flaskapp
+
+========================================================
+STEP 13 — PUSH CODE TO GITHUB
+========================================================
+
+Example App
+
+app.py
+
+--------------------------------------------------------
+
+from flask import Flask
+
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return "Hello Jenkins CI/CD"
+
+app.run(host='0.0.0.0', port=5000)
+
+--------------------------------------------------------
+
+requirements.txt
+
+--------------------------------------------------------
+flask
+--------------------------------------------------------
+
+Dockerfile
+
+--------------------------------------------------------
+
+FROM python:3.11
+
+WORKDIR /app
+
+COPY . .
+
+RUN pip install -r requirements.txt
+
+EXPOSE 5000
+
+CMD ["python","app.py"]
+
+--------------------------------------------------------
+
+Git Commands
+
+git init
+
+git add .
+
+git commit -m "Initial commit"
+
+git remote add origin https://github.com/USERNAME/flaskapp.git
+
+git push -u origin main
+
+========================================================
+STEP 14 — INSTALL JENKINS PLUGINS
+========================================================
+
+Dashboard
+    ↓
+Manage Jenkins
+    ↓
+Plugins
+
+Install:
+
+1. Git Plugin
+2. Docker Plugin
+3. Pipeline Plugin
+4. GitHub Plugin
+5. Docker Pipeline Plugin
+
+Restart Jenkins
+
+========================================================
+STEP 15 — CREATE FIRST JOB
+========================================================
+
+Dashboard
+    ↓
+New Item
+
+Enter Name:
+
+flaskapp-job
+
+Select:
+
+Freestyle Project
+
+========================================================
+STEP 16 — CONNECT GITHUB
+========================================================
+
+Inside Job
+
+Source Code Management
+    ↓
+Git
+
+Repository URL:
+
+https://github.com/USERNAME/flaskapp.git
+
+========================================================
+STEP 17 — ADD BUILD STEP
+========================================================
+
+Build Steps
+    ↓
+Execute Shell
+
+Add:
+
+--------------------------------------------------------
+
+docker build -t flaskapp:v1 .
+
+docker run -d -p 5000:5000 flaskapp:v1
+
+--------------------------------------------------------
+
+Save Job
+
+========================================================
+STEP 18 — BUILD JOB
+========================================================
+
+Click:
+
+Build Now
+
+========================================================
+STEP 19 — VIEW BUILD LOGS
+========================================================
+
+Click Build Number
+    ↓
+Console Output
+
+========================================================
+STEP 20 — TEST APPLICATION
+========================================================
+
+Browser
+
+http://SERVER-IP:5000
+
+========================================================
+STEP 21 — CREATE PIPELINE JOB
+========================================================
+
+Dashboard
+    ↓
+New Item
+
+Select:
+
+Pipeline
+
+========================================================
+STEP 22 — CREATE Jenkinsfile
+========================================================
+
+Inside GitHub Repository
+
+Create:
+
+Jenkinsfile
+
+Paste:
+
+--------------------------------------------------------
+
+pipeline {
+
+    agent any
+
+    stages {
+
+        stage('Clone') {
+
+            steps {
+
+                git 'https://github.com/USERNAME/flaskapp.git'
+
+            }
+        }
+
+        stage('Build Docker Image') {
+
+            steps {
+
+                sh 'docker build -t flaskapp:v1 .'
+
+            }
+        }
+
+        stage('Run Container') {
+
+            steps {
+
+                sh 'docker rm -f flaskapp || true'
+
+                sh 'docker run -d -p 5000:5000 --name flaskapp flaskapp:v1'
+
+            }
+        }
+    }
+}
+
+--------------------------------------------------------
+
+========================================================
+STEP 23 — CONFIGURE PIPELINE
+========================================================
+
+Pipeline
+    ↓
+Definition
+
+Select:
+
+Pipeline Script From SCM
+
+SCM:
+
+Git
+
+Repository URL:
+
+https://github.com/USERNAME/flaskapp.git
+
+Script Path:
+
+Jenkinsfile
+
+Save
+
+========================================================
+STEP 24 — RUN PIPELINE
+========================================================
+
+Build Now
+
+========================================================
+STEP 25 — AUTOMATIC BUILD USING GITHUB WEBHOOK
+========================================================
+
+GitHub Repository
+    ↓
+Settings
+    ↓
+Webhooks
+    ↓
+Add Webhook
+
+Payload URL:
+
+http://JENKINS-IP:8080/github-webhook/
+
+Content Type:
+
+application/json
+
+Save
+
+========================================================
+STEP 26 — ENABLE GITHUB HOOK
+========================================================
+
+Inside Jenkins Job
+
+Build Triggers
+    ↓
+
+Select:
+
+GitHub hook trigger for GITScm polling
+
+Save
+
+========================================================
+STEP 27 — TEST AUTOMATIC CI/CD
+========================================================
+
+Modify Code
+
+Example:
+
+return "Updated CI/CD"
+
+Push Changes
+
+git add .
+
+git commit -m "Updated app"
+
+git push
+
+Jenkins Automatically Builds Project
+
+========================================================
+STEP 28 — PUSH IMAGE TO DOCKER HUB
+========================================================
+
+Docker Login
+
+docker login
+
+Inside Jenkinsfile Add:
+
+--------------------------------------------------------
+
+stage('Push Docker Image') {
+
+    steps {
+
+        sh 'docker tag flaskapp:v1 USERNAME/flaskapp:v1'
+
+        sh 'docker push USERNAME/flaskapp:v1'
+
+    }
+}
+
+--------------------------------------------------------
+
+========================================================
+STEP 29 — EXPORT DOCKER IMAGE
+========================================================
+
+Inside Jenkins Build Step
+
+--------------------------------------------------------
+
+docker save -o flaskapp.tar flaskapp:v1
+
+--------------------------------------------------------
+
+========================================================
+STEP 30 — ARCHIVE BUILD ARTIFACTS
+========================================================
+
+Post-build Actions
+    ↓
+Archive Artifacts
+
+Add:
+
+*.tar
+
+========================================================
+STEP 31 — COMPLETE JENKINS PIPELINE
+========================================================
+
+GitHub
+    ↓
+Webhook Trigger
+    ↓
+Jenkins Pulls Code
+    ↓
+Docker Build
+    ↓
+DockerHub Push
+    ↓
+Run Container
+    ↓
+Deploy Application
+
+========================================================
+STEP 32 — IMPORTANT JENKINS COMMANDS
+========================================================
+
+Start Jenkins
+
+sudo systemctl start jenkins
+
+Stop Jenkins
+
+sudo systemctl stop jenkins
+
+Restart Jenkins
+
+sudo systemctl restart jenkins
+
+Status
+
+sudo systemctl status jenkins
+
+========================================================
+STEP 33 — IMPORTANT JENKINS DIRECTORIES
+========================================================
+
+Jenkins Home
+
+/var/lib/jenkins
+
+Job Configurations
+
+/var/lib/jenkins/jobs
+
+Logs
+
+/var/log/jenkins
+
+========================================================
+STEP 34 — BACKUP JENKINS
+========================================================
+
+Backup Jenkins Data
+
+sudo tar -cvf jenkins-backup.tar /var/lib/jenkins
+
+========================================================
+STEP 35 — RESTORE JENKINS
+========================================================
+
+sudo tar -xvf jenkins-backup.tar -C /
+
+Restart Jenkins
+
+sudo systemctl restart jenkins
+
+========================================================
+STEP 36 — COMPLETE MINI PROJECT
+========================================================
+
+1. Create Flask App
+2. Push To GitHub
+3. Install Jenkins
+4. Install Docker
+5. Create Jenkins Pipeline
+6. Auto Build Docker Image
+7. Push To DockerHub
+8. Run Container Automatically
+9. Export TAR Backup
+10. Deploy Anywhere
+
+========================================================
+STEP 37 — REAL DEVOPS FLOW
+========================================================
+
+Developer Pushes Code
+            ↓
+GitHub Repository
+            ↓
+Jenkins Pipeline
+            ↓
+Docker Image Build
+            ↓
+DockerHub Push
+            ↓
+AWS Deployment
+            ↓
+Kubernetes Deployment
+            ↓
+Prometheus Monitoring
+
+========================================================
+STEP 38 — MOST IMPORTANT JENKINS CONCEPTS
+========================================================
+
+Freestyle Job
+    Basic automation job
+
+Pipeline
+    CI/CD workflow as code
+
+Agent
+    Machine executing jobs
+
+Stage
+    Logical step in pipeline
+
+Node
+    Jenkins worker machine
+
+Executor
+    Parallel job runner
+
+Webhook
+    Automatic trigger from GitHub
+
+========================================================
+STEP 39 — DAILY DEVOPS WORKFLOW
+========================================================
+
+Developer Writes Code
+        ↓
+git push
+        ↓
+GitHub Webhook
+        ↓
+Jenkins Trigger
+        ↓
+Docker Build
+        ↓
+Deploy Automatically
+
+========================================================
+END OF JENKINS PRACTICAL GUIDE
+========================================================
