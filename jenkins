@@ -1,0 +1,130 @@
+JENKINS BEGINNER GUIDE (STEP-BY-STEP)
+
+====================================================
+1. OPEN JENKINS
+====================================================
+Open browser:
+http://localhost:8080
+(or)
+http://127.0.0.1:8080
+
+If locked, get password:
+
+sudo cat /var/lib/jenkins/secrets/initialAdminPassword
+
+Copy password and paste in browser.
+
+====================================================
+2. FIRST TIME SETUP
+====================================================
+- Click "Install suggested plugins"
+- Wait for installation
+- Create admin user
+- Save and continue
+
+====================================================
+3. JENKINS DASHBOARD
+====================================================
+Main options:
+- New Item (create job)
+- Build History (view runs)
+- Manage Jenkins (settings)
+
+====================================================
+4. CREATE FIRST JOB (FREESTYLE)
+====================================================
+Step 1:
+Click "New Item"
+
+Step 2:
+Enter name: first-job
+Select: Freestyle project
+Click OK
+
+Step 3:
+Scroll to "Build Steps"
+Click: Add build step → Execute shell
+
+Add commands:
+
+echo "Hello Jenkins"
+date
+whoami
+
+Step 4:
+Click Save
+
+Step 5:
+Click Build Now
+
+Step 6:
+View output:
+Build History → Click build → Console Output
+
+====================================================
+5. CREATE PIPELINE JOB
+====================================================
+Step 1:
+New Item → Pipeline
+
+Step 2:
+Paste script:
+
+pipeline {
+    agent any
+
+    stages {
+        stage('Build') {
+            steps {
+                echo 'Building project...'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                echo 'Running tests...'
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                echo 'Deploying app...'
+            }
+        }
+    }
+}
+
+Step 3:
+Save
+Step 4:
+Build Now
+
+====================================================
+6. BASIC CONCEPTS
+====================================================
+Job = Task
+Build = Execution
+Workspace = Temporary folder
+Console Output = Logs
+
+====================================================
+7. REAL USE CASES
+====================================================
+- GitHub integration
+- Auto build on push
+- Running tests
+- Deployment automation
+- Docker pipelines
+
+====================================================
+8. NEXT LEARNING STEPS
+====================================================
+- GitHub integration with Jenkins
+- Webhook triggers
+- Docker + Jenkins deployment
+- Maven/Node.js builds
+- CI/CD pipelines
+
+====================================================
+END OF GUIDE
+====================================================
