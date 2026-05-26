@@ -1,0 +1,423 @@
+===============================
+COMPLETE GIT COMMANDS CHEAT SHEET
+===============================
+
+--------------------------------
+1. INSTALLATION
+--------------------------------
+
+# Ubuntu/Debian
+sudo apt update
+sudo apt install git -y
+
+# Verify installation
+git --version
+
+--------------------------------
+2. GIT CONFIGURATION
+--------------------------------
+
+# Set global username
+git config --global user.name "Your Name"
+
+# Set global email
+git config --global user.email "youremail@gmail.com"
+
+# View all configs
+git config --list
+
+# View username
+git config user.name
+
+# View email
+git config user.email
+
+# View global username
+git config --global user.name
+
+# View global email
+git config --global user.email
+
+# Remove global username
+git config --global --unset user.name
+
+# Remove global email
+git config --global --unset user.email
+
+--------------------------------
+3. CREATE REPOSITORY
+--------------------------------
+
+# Create folder
+mkdir myproject
+
+# Enter folder
+cd myproject
+
+# Initialize git
+git init
+
+--------------------------------
+4. REPOSITORY STATUS
+--------------------------------
+
+# Check status
+git status
+
+# Short status
+git status -s
+
+--------------------------------
+5. STAGING FILES
+--------------------------------
+
+# Add single file
+git add filename
+
+# Add all files
+git add .
+
+# Add multiple files
+git add file1 file2
+
+--------------------------------
+6. COMMITS
+--------------------------------
+
+# Commit changes
+git commit -m "message"
+
+# Commit all tracked files
+git commit -am "message"
+
+# Amend last commit
+git commit --amend
+
+--------------------------------
+7. LOGS & HISTORY
+--------------------------------
+
+# Full history
+git log
+
+# One line history
+git log --oneline
+
+# Graph history
+git log --graph
+
+# Limited commits
+git log -5
+
+--------------------------------
+8. FILE DIFFERENCES
+--------------------------------
+
+# View changes
+git diff
+
+# View staged changes
+git diff --staged
+
+--------------------------------
+9. BRANCHES
+--------------------------------
+
+# List branches
+git branch
+
+# Create branch
+git branch feature1
+
+# Switch branch
+git checkout feature1
+
+# Modern switch
+git switch feature1
+
+# Create and switch
+git checkout -b feature1
+
+# Modern create + switch
+git switch -c feature1
+
+# Rename branch
+git branch -m newname
+
+# Delete branch
+git branch -d feature1
+
+# Force delete
+git branch -D feature1
+
+--------------------------------
+10. MERGING
+--------------------------------
+
+# Merge branch
+git merge feature1
+
+# Abort merge
+git merge --abort
+
+--------------------------------
+11. REMOTE REPOSITORIES
+--------------------------------
+
+# Add remote
+git remote add origin https://github.com/user/repo.git
+
+# View remotes
+git remote -v
+
+# Remove remote
+git remote remove origin
+
+# Change remote URL
+git remote set-url origin NEW_URL
+
+--------------------------------
+12. PUSH & PULL
+--------------------------------
+
+# First push
+git push -u origin main
+
+# Push changes
+git push
+
+# Pull changes
+git pull
+
+# Fetch changes
+git fetch
+
+--------------------------------
+13. CLONE REPOSITORY
+--------------------------------
+
+# Clone repo
+git clone https://github.com/user/repo.git
+
+# Clone using SSH
+git clone git@github.com:user/repo.git
+
+--------------------------------
+14. UNDO CHANGES
+--------------------------------
+
+# Restore file
+git restore filename
+
+# Unstage file
+git restore --staged filename
+
+# Reset soft
+git reset --soft HEAD~1
+
+# Reset hard
+git reset --hard HEAD~1
+
+# Reset specific file
+git reset filename
+
+--------------------------------
+15. STASH
+--------------------------------
+
+# Save work
+git stash
+
+# View stash list
+git stash list
+
+# Restore stash
+git stash pop
+
+# Apply stash
+git stash apply
+
+# Delete stash
+git stash drop
+
+--------------------------------
+16. TAGS
+--------------------------------
+
+# Create tag
+git tag v1.0
+
+# View tags
+git tag
+
+# Push tag
+git push origin v1.0
+
+# Delete tag
+git tag -d v1.0
+
+--------------------------------
+17. REBASE
+--------------------------------
+
+# Rebase branch
+git rebase main
+
+# Abort rebase
+git rebase --abort
+
+# Continue rebase
+git rebase --continue
+
+--------------------------------
+18. CHERRY PICK
+--------------------------------
+
+# Pick commit
+git cherry-pick COMMIT_ID
+
+--------------------------------
+19. REMOVE FILES
+--------------------------------
+
+# Remove file
+git rm filename
+
+# Remove cached file
+git rm --cached filename
+
+--------------------------------
+20. GITIGNORE
+--------------------------------
+
+# Create gitignore
+touch .gitignore
+
+Example:
+*.log
+.env
+venv/
+__pycache__/
+
+--------------------------------
+21. SSH AUTHENTICATION
+--------------------------------
+
+# Generate SSH key
+ssh-keygen -t ed25519 -C "youremail@gmail.com"
+
+# Start SSH agent
+eval "$(ssh-agent -s)"
+
+# Add SSH key
+ssh-add ~/.ssh/id_ed25519
+
+# View public key
+cat ~/.ssh/id_ed25519.pub
+
+# Test GitHub SSH
+ssh -T git@github.com
+
+--------------------------------
+22. GITHUB WORKFLOW
+--------------------------------
+
+# Clone repo
+git clone URL
+
+# Create branch
+git checkout -b feature
+
+# Add changes
+git add .
+
+# Commit
+git commit -m "feature added"
+
+# Push branch
+git push origin feature
+
+--------------------------------
+23. VIEW FILES
+--------------------------------
+
+# Show tracked files
+git ls-files
+
+--------------------------------
+24. CLEAN FILES
+--------------------------------
+
+# Remove untracked files
+git clean -f
+
+# Remove untracked directories
+git clean -fd
+
+--------------------------------
+25. SHOW COMMIT DETAILS
+--------------------------------
+
+# Show commit
+git show
+
+# Show specific commit
+git show COMMIT_ID
+
+--------------------------------
+26. SEARCH COMMITS
+--------------------------------
+
+# Search commit messages
+git log --grep="keyword"
+
+--------------------------------
+27. SHORTCUT DAILY WORKFLOW
+--------------------------------
+
+git status
+git add .
+git commit -m "message"
+git push
+
+--------------------------------
+28. COMPLETE BASIC WORKFLOW
+--------------------------------
+
+mkdir project
+cd project
+git init
+
+git add .
+git commit -m "first commit"
+
+git remote add origin URL
+
+git push -u origin main
+
+--------------------------------
+29. CHECK CONNECTED ACCOUNT
+--------------------------------
+
+# Check remote
+git remote -v
+
+# Check SSH login
+ssh -T git@github.com
+
+--------------------------------
+30. HELP COMMANDS
+--------------------------------
+
+# Git help
+git help
+
+# Command help
+git help commit
+
+# Quick help
+git commit --help
+
+===============================
+END OF GIT CHEAT SHEET
+===============================
