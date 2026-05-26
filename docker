@@ -1,0 +1,522 @@
+========================================================
+DOCKER COMPLETE PRACTICAL GUIDE
+FROM GITHUB CODE TO DOCKER IMAGE DEPLOYMENT
+========================================================
+
+PROJECT FLOW
+
+GitHub Repository
+        ↓
+Clone Source Code
+        ↓
+Create Dockerfile
+        ↓
+Build Docker Image
+        ↓
+Run Container
+        ↓
+Test Application
+        ↓
+Tag Docker Image
+        ↓
+Push Image to DockerHub
+        ↓
+Export Docker Image (.tar backup)
+        ↓
+Import Image Anywhere
+        ↓
+Deploy Container
+
+========================================================
+STEP 1 — INSTALL DOCKER
+========================================================
+
+UBUNTU / DEBIAN
+
+sudo apt update
+sudo apt install docker.io -y
+
+Start Docker
+
+sudo systemctl enable docker
+sudo systemctl start docker
+
+Check Docker Version
+
+docker --version
+
+Check Docker Service
+
+sudo systemctl status docker
+
+========================================================
+STEP 2 — INSTALL GIT
+========================================================
+
+sudo apt install git -y
+
+Check Version
+
+git --version
+
+========================================================
+STEP 3 — CLONE CODE FROM GITHUB
+========================================================
+
+Syntax
+
+git clone https://github.com/USERNAME/REPOSITORY.git
+
+Example
+
+git clone https://github.com/user/flaskapp.git
+
+Move Into Project
+
+cd flaskapp
+
+========================================================
+STEP 4 — VIEW PROJECT FILES
+========================================================
+
+ls
+
+Example Files
+
+app.py
+requirements.txt
+
+========================================================
+STEP 5 — CREATE APPLICATION
+========================================================
+
+Example Python Flask App
+
+nano app.py
+
+Paste:
+
+--------------------------------------------------------
+
+from flask import Flask
+
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return "Hello Docker DevOps"
+
+app.run(host='0.0.0.0', port=5000)
+
+--------------------------------------------------------
+
+Save File
+
+CTRL + X
+Y
+ENTER
+
+========================================================
+STEP 6 — CREATE requirements.txt
+========================================================
+
+nano requirements.txt
+
+Paste:
+
+--------------------------------------------------------
+flask
+--------------------------------------------------------
+
+Save File
+
+========================================================
+STEP 7 — CREATE Dockerfile
+========================================================
+
+nano Dockerfile
+
+Paste:
+
+--------------------------------------------------------
+
+FROM python:3.11
+
+WORKDIR /app
+
+COPY . .
+
+RUN pip install -r requirements.txt
+
+EXPOSE 5000
+
+CMD ["python","app.py"]
+
+--------------------------------------------------------
+
+Save File
+
+========================================================
+STEP 8 — UNDERSTAND DOCKERFILE
+========================================================
+
+FROM
+    Base image
+
+WORKDIR
+    Working directory inside container
+
+COPY
+    Copy files into container
+
+RUN
+    Execute commands during build
+
+EXPOSE
+    Open application port
+
+CMD
+    Run application
+
+========================================================
+STEP 9 — BUILD DOCKER IMAGE
+========================================================
+
+Syntax
+
+docker build -t IMAGE_NAME:VERSION .
+
+Example
+
+docker build -t flaskapp:v1 .
+
+========================================================
+STEP 10 — VIEW DOCKER IMAGES
+========================================================
+
+docker images
+
+========================================================
+STEP 11 — RUN CONTAINER
+========================================================
+
+Syntax
+
+docker run -d -p HOST_PORT:CONTAINER_PORT IMAGE_NAME
+
+Example
+
+docker run -d -p 5000:5000 flaskapp:v1
+
+========================================================
+STEP 12 — VIEW RUNNING CONTAINERS
+========================================================
+
+docker ps
+
+View All Containers
+
+docker ps -a
+
+========================================================
+STEP 13 — TEST APPLICATION
+========================================================
+
+Browser
+
+http://localhost:5000
+
+OR
+
+curl http://localhost:5000
+
+========================================================
+STEP 14 — ENTER RUNNING CONTAINER
+========================================================
+
+docker exec -it CONTAINER_ID bash
+
+========================================================
+STEP 15 — VIEW CONTAINER LOGS
+========================================================
+
+docker logs CONTAINER_ID
+
+Live Logs
+
+docker logs -f CONTAINER_ID
+
+========================================================
+STEP 16 — STOP CONTAINER
+========================================================
+
+docker stop CONTAINER_ID
+
+========================================================
+STEP 17 — START CONTAINER
+========================================================
+
+docker start CONTAINER_ID
+
+========================================================
+STEP 18 — REMOVE CONTAINER
+========================================================
+
+docker rm CONTAINER_ID
+
+Force Remove
+
+docker rm -f CONTAINER_ID
+
+========================================================
+STEP 19 — REMOVE IMAGE
+========================================================
+
+docker rmi IMAGE_ID
+
+========================================================
+STEP 20 — CREATE DOCKER HUB ACCOUNT
+========================================================
+
+Open
+
+https://hub.docker.com
+
+Create Account
+
+========================================================
+STEP 21 — LOGIN TO DOCKER HUB
+========================================================
+
+docker login
+
+Enter:
+
+Username
+Password
+
+========================================================
+STEP 22 — TAG IMAGE
+========================================================
+
+Syntax
+
+docker tag LOCAL_IMAGE USERNAME/IMAGE:VERSION
+
+Example
+
+docker tag flaskapp:v1 myuser/flaskapp:v1
+
+========================================================
+STEP 23 — PUSH IMAGE TO DOCKER HUB
+========================================================
+
+docker push myuser/flaskapp:v1
+
+========================================================
+STEP 24 — VERIFY IMAGE ONLINE
+========================================================
+
+Open DockerHub
+
+Check Repository
+
+========================================================
+STEP 25 — PULL IMAGE FROM DOCKER HUB
+========================================================
+
+docker pull myuser/flaskapp:v1
+
+========================================================
+STEP 26 — RUN IMAGE FROM DOCKER HUB
+========================================================
+
+docker run -d -p 5000:5000 myuser/flaskapp:v1
+
+========================================================
+STEP 27 — EXPORT DOCKER IMAGE TO TAR FILE
+========================================================
+
+IMPORTANT:
+Docker creates TAR image backup.
+NOT ISO image.
+
+Create TAR Backup
+
+docker save -o flaskapp.tar flaskapp:v1
+
+========================================================
+STEP 28 — VERIFY TAR FILE
+========================================================
+
+ls
+
+Output Example
+
+flaskapp.tar
+
+========================================================
+STEP 29 — IMPORT IMAGE FROM TAR FILE
+========================================================
+
+docker load -i flaskapp.tar
+
+========================================================
+STEP 30 — COPY TAR FILE TO ANOTHER SERVER
+========================================================
+
+scp flaskapp.tar user@SERVER_IP:/home/user/
+
+========================================================
+STEP 31 — LOAD IMAGE ON NEW SERVER
+========================================================
+
+docker load -i flaskapp.tar
+
+Run Container
+
+docker run -d -p 5000:5000 flaskapp:v1
+
+========================================================
+STEP 32 — CREATE DOCKER VOLUME
+========================================================
+
+docker volume create myvolume
+
+========================================================
+STEP 33 — USE VOLUME
+========================================================
+
+docker run -d \
+-v myvolume:/data \
+nginx
+
+========================================================
+STEP 34 — CREATE DOCKER NETWORK
+========================================================
+
+docker network create mynetwork
+
+========================================================
+STEP 35 — RUN CONTAINER INSIDE NETWORK
+========================================================
+
+docker run -d \
+--network=mynetwork \
+nginx
+
+========================================================
+STEP 36 — CREATE docker-compose.yml
+========================================================
+
+nano docker-compose.yml
+
+Paste:
+
+--------------------------------------------------------
+
+version: '3'
+
+services:
+
+  web:
+    build: .
+    ports:
+      - "5000:5000"
+
+--------------------------------------------------------
+
+========================================================
+STEP 37 — RUN DOCKER COMPOSE
+========================================================
+
+docker compose up -d
+
+========================================================
+STEP 38 — STOP DOCKER COMPOSE
+========================================================
+
+docker compose down
+
+========================================================
+STEP 39 — COMPLETE DEVOPS WORKFLOW
+========================================================
+
+Developer Writes Code
+        ↓
+Push Code To GitHub
+        ↓
+Git Clone Repository
+        ↓
+Create Dockerfile
+        ↓
+Build Docker Image
+        ↓
+Run Container
+        ↓
+Test Application
+        ↓
+Push Image To DockerHub
+        ↓
+Export TAR Backup
+        ↓
+Deploy Anywhere
+
+========================================================
+STEP 40 — IMPORTANT DOCKER COMMANDS
+========================================================
+
+docker images
+docker ps
+docker ps -a
+docker build
+docker run
+docker stop
+docker start
+docker rm
+docker rmi
+docker logs
+docker exec
+docker pull
+docker push
+docker save
+docker load
+docker network ls
+docker volume ls
+
+========================================================
+STEP 41 — COMPLETE MINI PROJECT
+========================================================
+
+1. Create Flask App
+2. Push Code To GitHub
+3. Clone Repository
+4. Create Dockerfile
+5. Build Image
+6. Run Container
+7. Push To DockerHub
+8. Export TAR Backup
+9. Load Image On Another Machine
+10. Deploy Application
+
+========================================================
+STEP 42 — REAL INDUSTRY DEVOPS FLOW
+========================================================
+
+GitHub
+   ↓
+Jenkins
+   ↓
+Docker Build
+   ↓
+DockerHub
+   ↓
+AWS EC2
+   ↓
+Kubernetes
+   ↓
+Prometheus Monitoring
+
+========================================================
+END OF DOCKER PRACTICAL GUIDE
+========================================================
