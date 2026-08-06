@@ -1,132 +1,103 @@
-JENKINS BEGINNER GUIDE (STEP-BY-STEP)
+mkdir jenkins-cicd
+cd jenkins-cicd
+git init
 
-====================================================
-1. OPEN JENKINS
-====================================================
-Open browser:
-http://localhost:8080
-(or)
-http://127.0.0.1:8080
-
-If locked, get password:
-
-sudo cat /var/lib/jenkins/secrets/initialAdminPassword
-
-Copy password and paste in browser.
-
-====================================================
-2. FIRST TIME SETUP
-====================================================
-- Click "Install suggested plugins"
-- Wait for installation
-- Create admin user
-- Save and continue
-////////////////////////////////////////////////////
-////////////////////////////////////////////////////
-////////////////////////////////////////////////////
-====================================================
-3. JENKINS DASHBOARD
-====================================================
-Main options:
-- New Item (create job)
-- Build History (view runs)
-- Manage Jenkins (settings)
-
-====================================================
-4. CREATE FIRST JOB (FREESTYLE)
-====================================================
-Step 1:
-Click "New Item"
-
-Step 2:
-Enter name: first-job
-Select: Freestyle project
-Click OK
-
-Step 3:
-Scroll to "Build Steps"
-Click: Add build step → Execute shell
-
-Add commands:
-
-echo "Hello Jenkins"
-date
-whoami
-
-Step 4:
-Click Save
-
-Step 5:
-Click Build Now
-
-Step 6:
-View output:
-Build History → Click build → Console Output
-
-====================================================
-5. CREATE PIPELINE JOB
-====================================================
-Step 1:
-New Item → Pipeline
-
-Step 2:
-Paste script:
-
+cat > Jenkinsfile << 'EOF'
 pipeline {
     agent any
 
     stages {
         stage('Build') {
             steps {
-                echo 'Building project...'
+                echo 'Build Stage'
             }
         }
 
         stage('Test') {
             steps {
-                echo 'Running tests...'
+                echo 'Test Stage'
             }
         }
 
         stage('Deploy') {
             steps {
-                echo 'Deploying app...'
+                echo 'Deploy Stage'
             }
         }
     }
 }
+EOF
 
-Step 3:
-Save
-Step 4:
-Build Now
+git add .
+git commit -m "Initial Jenkins pipeline"
+git branch -M main
+git remote add origin https://github.com/<your-username>/<your-repository>.git
+git push -u origin main
 
-====================================================
-6. BASIC CONCEPTS
-====================================================
-Job = Task
-Build = Execution
-Workspace = Temporary folder
-Console Output = Logs
+cat > Jenkinsfile << 'EOF'
+pipeline {
+    agent {
+        docker {
+            image 'node:14'
+        }
+    }
 
-====================================================
-7. REAL USE CASES
-====================================================
-- GitHub integration
-- Auto build on push
-- Running tests
-- Deployment automation
-- Docker pipelines
+    stages {
+        stage('Build') {
+            steps {
+                sh 'npm --version'
+                echo 'Build Stage'
+            }
+        }
 
-====================================================
-8. NEXT LEARNING STEPS
-====================================================
-- GitHub integration with Jenkins
-- Webhook triggers
-- Docker + Jenkins deployment
-- Maven/Node.js builds
-- CI/CD pipelines
+        stage('Test') {
+            steps {
+                echo 'Test Stage'
+            }
+        }
 
-====================================================
-END OF GUIDE
-====================================================
+        stage('Deploy') {
+            steps {
+                echo 'Deploy Stage'
+            }
+        }
+    }
+}
+EOF
+
+git add Jenkinsfile
+git commit -m "Add Docker agent to pipeline"
+git push origin main
+
+Open Jenkins: http://localhost:8080
+
+New Item
+→ Pipeline
+→ Pipeline Script from SCM
+→ SCM: Git
+→ Repository URL: https://github.com/<your-username>/<your-repository>.git
+→ Branch: */main
+→ Script Path: Jenkinsfile
+→ Save
+→ Build Now
+
+To enable GitHub Webhook:
+Jenkins Job
+→ Configure
+→ Build Triggers
+→ Enable "GitHub hook trigger for GITScm polling"
+→ Save
+
+GitHub Repository
+→ Settings
+→ Webhooks
+→ Add webhook
+Payload URL: http://<your-public-ip-or-ngrok>/github-webhook/
+Content-Type: application/json
+Events: Just the push event
+→ Add Webhook
+
+Required Screenshots:
+1. Jenkins Stage View showing Build, Test, and Deploy stages completed successfully.
+2. Jenkinsfile with Docker agent (node:14) and Console Output showing npm --version executed inside the Node container.
+3. Jenkins Configure page with "GitHub hook trigger for GITScm polling" enabled.
