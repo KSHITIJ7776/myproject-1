@@ -1,123 +1,79 @@
-DOCKER CMD GUIDE (COMPLETE BEGINNER TO BASICS)
-
-====================================================
-1. CHECK DOCKER INSTALLATION
-====================================================
-docker --version
-
-If installed, you will see:
-Docker version xx.xx.x
-
-====================================================
-2. START DOCKER (LINUX / WSL)
-====================================================
-sudo systemctl start docker
-sudo systemctl enable docker
-
-====================================================
-3. RUN FIRST TEST CONTAINER
-====================================================
-docker run hello-world
-
-Purpose:
-- Confirms Docker is installed correctly
-
-====================================================
-4. LIST CONTAINERS
-====================================================
-docker ps          (running containers)
-docker ps -a       (all containers)
-
-====================================================
-5. DOWNLOAD IMAGE (PULL)
-====================================================
-docker pull ubuntu
+# Pull the official Nginx image
 docker pull nginx
 
-====================================================
-6. RUN CONTAINER INTERACTIVE MODE
-====================================================
-docker run -it ubuntu
+# Run Nginx container in detached mode
+docker run -d --name mynginx -p 8081:80 nginx
 
-Exit container:
-exit
-
-====================================================
-7. RUN CONTAINER IN BACKGROUND
-====================================================
-docker run -d nginx
-
-Open browser:
-http://localhost
-
-====================================================
-8. PORT MAPPING
-====================================================
-docker run -d -p 8081:80 nginx
-
-Now open:
-http://localhost:8081
-
-====================================================
-9. STOP CONTAINER
-====================================================
+# Verify the running container
 docker ps
-docker stop <container_id>
 
-====================================================
-10. REMOVE CONTAINER
-====================================================
-docker rm <container_id>
+# Create a Docker volume
+docker volume create db_data
 
-====================================================
-11. REMOVE IMAGE
-====================================================
-docker rmi nginx
+# Pull the MySQL image
+docker pull mysql:8.0
 
-====================================================
-12. EXECUTE INSIDE CONTAINER
-====================================================
-docker exec -it <container_id> bash
+# Run MySQL container using the volume
+docker run -d --name mysql-db -e MYSQL_ROOT_PASSWORD=admin -v db_data:/var/lib/mysql -p 3306:3306 mysql:8.0
 
-====================================================
-13. VIEW LOGS
-====================================================
-docker logs <container_id>
+# Verify the Docker volume
+docker volume ls
 
-====================================================
-14. LIST IMAGES
-====================================================
-docker images
+# Inspect the MySQL container to confirm the volume mount
+docker inspect mysql-db
 
-====================================================
-15. DOCKER SYSTEM INFO
-====================================================
-docker info
+# Create a docker-compose.yml file
+cat > docker-compose.yml << 'EOF'
+version: '3.8'
 
-====================================================
-16. CLEAN UP COMMANDS
-====================================================
-docker container prune
-docker image prune
-docker system prune -a
+services:
+  app:
+    image: nginx
+    container_name: app
+    ports:
+      - "8081:80"
 
-====================================================
-17. IMPORTANT DOCKER CONCEPTS
-====================================================
-Image      = Blueprint (template)
-Container  = Running instance
-Dockerfile = Build instructions
-Volume     = Persistent storage
+  database:
+    image: mysql:8.0
+    container_name: database
+    environment:
+      MYSQL_ROOT_PASSWORD: admin
+    volumes:
+      - db_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
 
-====================================================
-18. REAL WORLD USES
-====================================================
-- Run web servers (nginx, apache)
-- Run databases (mysql, mongo)
-- Application deployment
-- CI/CD pipelines (Jenkins + Docker)
-- Microservices architecture
+volumes:
+  db_data:
+EOF
 
-====================================================
-END OF DOCKER GUIDE
-====================================================
+# Start the multi-container application
+docker compose up -d
+
+# Verify the running containers
+docker compose ps
+
+# View the docker-compose.yml file
+cat docker-compose.yml
+
+Required Screenshots:
+
+Screenshot 5:
+- Terminal showing:
+  docker pull nginx
+  docker run -d --name mynginx -p 8081:80 nginx
+  docker ps
+
+Screenshot 6:
+- Terminal showing:
+  docker volume create db_data
+  docker run -d --name mysql-db -e MYSQL_ROOT_PASSWORD=admin -v db_data:/var/lib/mysql -p 3306:3306 mysql:8.0
+  docker volume ls
+  or
+  docker inspect mysql-db
+
+Screenshot 7:
+- Contents of docker-compose.yml
+- Terminal showing:
+  docker compose up -d
+  docker compose ps
